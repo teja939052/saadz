@@ -176,23 +176,11 @@ export default function App() {
 
   return (
     <main className="page">
-      <StarField />
+      <StarField nameAlpha={phase === "intro" ? 0.95 : 0.72} />
       <ConfettiBurst trigger={confetti} />
 
       {phase === "intro" && (
-        <section className="intro panel slide-up">
-          <div className="seal-ring">
-            <div className="seal">✦</div>
-            <div className="seal-pulse" />
-          </div>
-          <p className="eyebrow">A LITTLE SOMETHING MADE JUST FOR YOU</p>
-          <div className="title-card">
-            <h1 className="intro-title">
-              For <span className="dune intro-name">Sadaa</span>
-            </h1>
-            <span className="ornament">✦</span>
-          </div>
-          <p className="subtitle">Some wishes deserve more than a message.</p>
+        <section className="intro-bare slide-up">
           <button className="primary glow-btn" onClick={() => setPhase("wish")}>
             Open your surprise <span className="btn-arrow">↗</span>
           </button>

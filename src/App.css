@@ -97,76 +97,23 @@ footer span { color: #e5a3b4; margin-left: 6px; }
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-/* ── Intro ── */
-.panel {
-  position: relative;
+/* ── Intro (no card — the name is the stars) ── */
+.intro-bare {
+  position: fixed;
+  inset: 0;
   z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 20px 13vh;
   text-align: center;
-  padding: 70px 40px;
-  border-radius: 32px;
-  border: 1px solid rgba(240,194,124,.15);
-  background: linear-gradient(160deg, rgba(255,255,255,.06), rgba(255,255,255,.015));
-  backdrop-filter: blur(20px);
-  box-shadow: 0 40px 120px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.08);
-  max-width: 580px;
-  width: 100%;
+  pointer-events: none;
 }
-.seal-ring {
-  position: relative;
-  width: 80px;
-  height: 80px;
-  margin: 0 auto 30px;
-}
-.seal {
-  width: 80px;
-  height: 80px;
-  display: grid;
-  place-items: center;
-  border: 1.5px solid var(--gold);
-  border-radius: 50%;
-  font-size: 2rem;
-  color: #f5d79c;
-  background: radial-gradient(circle, rgba(240,194,124,.15), transparent);
-  position: relative;
-  z-index: 1;
-  animation: sealSpin 20s linear infinite;
-}
-@keyframes sealSpin { from { transform: rotate(0); } to { transform: rotate(360deg); } }
-.seal-pulse {
-  position: absolute;
-  inset: -8px;
-  border: 1px solid rgba(240,194,124,.3);
-  border-radius: 50%;
-  animation: pulse 2.5s ease-in-out infinite;
-}
-@keyframes pulse {
-  0%, 100% { transform: scale(1); opacity: .6; }
-  50% { transform: scale(1.15); opacity: 0; }
-}
-
-.intro-title {
-  font-family: 'Playfair Display', serif;
-  font-weight: 500;
-  font-size: clamp(3.2rem, 10vw, 5.8rem);
-  line-height: 1.03;
-  margin: 16px 0;
-  color: #fff4e5;
-}
-.intro-title span {
-  color: var(--gold);
-  font-style: italic;
-  background: linear-gradient(135deg, #f5d79c, #d99554, #f5d79c);
-  background-size: 200% 200%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: shimmer 3s ease-in-out infinite;
-}
-@keyframes shimmer {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-}
-.subtitle { color: #c5b0ad; margin: 18px 0 36px; font-size: 1rem; }
+.intro-bare > * { pointer-events: auto; }
+.intro-bare .primary { padding: 18px 40px; font-size: 1rem; }
+.intro-bare .tiny { margin-top: 16px; }
+.intro-bare .credit { margin-top: 6px; }
 
 /* ── Buttons ── */
 .primary {
@@ -603,7 +550,8 @@ footer span { color: #e5a3b4; margin-left: 6px; }
 
 /* ── Responsive ── */
 @media (max-width: 520px) {
-  .panel { padding: 50px 22px; }
+  .intro-bare { padding-bottom: 15vh; }
+  .intro-bare .primary { padding: 16px 30px; font-size: .92rem; }
   .wish-card { padding: 24px 18px; }
   .wish-message { font-size: .88rem; }
   .actions { flex-direction: column; align-items: stretch; }

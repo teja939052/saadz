@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import "./App.css";
+import MemoriesView from "./components/Memories/MemoriesView.jsx";
 
 const wishes = [
   { language: "English", greeting: "Happy Birthday, Sadaa!", message: "May this new chapter bring you beautiful surprises, brave dreams, and a hundred little reasons to smile." },
@@ -267,7 +268,7 @@ function WishScreen({ onWish }) {
 
 // ─── Main App ─────────────────────────────────────────────────────
 export default function App() {
-  const [phase, setPhase] = useState("intro"); // intro | wish | experience
+  const [phase, setPhase] = useState("intro"); // intro | wish | experience | memories
   const [index, setIndex] = useState(0);
   const [showNote, setShowNote] = useState(false);
   const [hearts, setHearts] = useState(false);
@@ -301,6 +302,7 @@ export default function App() {
             Open your surprise <span className="btn-arrow">↗</span>
           </button>
           <p className="tiny">best experienced with sound on ✨</p>
+          <p className="credit">handmade for you — by <span>BHANU TEJAA</span></p>
         </section>
       )}
 
@@ -322,7 +324,7 @@ export default function App() {
             <div className="orbit orbit-b" />
             <div className="orbit orbit-c" />
             <div className="portrait-frame">
-              <img src="./sadaa-dot-art.png" alt="Portrait" className="portrait" />
+              <img src="./sadaa-dot-art.png" alt="Portrait of Sadaa" className="portrait" />
               <div className="portrait-shine" />
             </div>
             <span className="spark spark-a">✧</span>
@@ -353,6 +355,9 @@ export default function App() {
             <button className="secondary" onClick={() => setShowNote((v) => !v)}>
               {showNote ? "Close note" : "💌 One little note"}
             </button>
+            <button className="secondary sky-btn" onClick={() => setPhase("memories")}>
+              ✦ Our little sky
+            </button>
           </div>
 
           {showNote && (
@@ -363,7 +368,7 @@ export default function App() {
                 I'm glad our paths crossed, Sadaa. I hope this year gives you reasons
                 to feel proud, peaceful, loved, and excited for what comes next.
               </p>
-              <small>— from your bestie ♡</small>
+              <small>— from your bestie, BHANU TEJAA ♡</small>
             </div>
           )}
 
@@ -379,8 +384,10 @@ export default function App() {
         </section>
       )}
 
+      {phase === "memories" && <MemoriesView onBack={() => setPhase("experience")} />}
+
       <footer>
-        FOR SADAA, WITH GOOD VIBES ONLY <span>♡</span>
+        FOR SADAA, WITH GOOD VIBES ONLY <span>♡</span> · A SURPRISE BY BHANU TEJAA
       </footer>
     </main>
   );

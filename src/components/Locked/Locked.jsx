@@ -71,6 +71,22 @@ export default function Locked({ onUnlocked }) {
           </p>
         )}
         <p className="tiny lock-hint">one more sleep, and then it is all yours ♡</p>
+
+        {import.meta.env.DEV && (
+          <button
+            className="dev-unlock"
+            onClick={() => {
+              try {
+                window.localStorage.setItem("sadaa-unlocked", "1");
+              } catch {
+                /* storage may be blocked */
+              }
+              onUnlocked();
+            }}
+          >
+            preview it now (dev only)
+          </button>
+        )}
       </section>
 
       <footer>

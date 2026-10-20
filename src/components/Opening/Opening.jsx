@@ -49,7 +49,7 @@ export default function Opening({ onDone }) {
       for (let i = 0; i < COUNT; i++) {
         const target = points[i % Math.max(1, points.length)] || { x: W / 2, y: H / 2 };
         const ang = Math.random() * Math.PI * 2;
-        const dist = Math.max(W, H) * (0.3 + Math.random() * 0.95);
+        const dist = Math.max(W, H) * (0.22 + Math.random() * 0.72);
         particles.push({
           tx: target.x,
           ty: target.y,
@@ -76,7 +76,7 @@ export default function Opening({ onDone }) {
       ctx.clearRect(0, 0, W, H);
 
       // soft gold glow behind the forming name
-      const glow = clamp((t - 0.55) / 0.35);
+      const glow = clamp(0.18 + (t - 0.55) / 0.35);
       if (glow > 0) {
         ctx.save();
         ctx.globalAlpha = 0.16 * glow * fade;
@@ -118,7 +118,7 @@ export default function Opening({ onDone }) {
         const near = 1 - Math.min(1, Math.abs(x - sweepX) / (W * 0.09));
         const boost = near * near * 0.9;
 
-        ctx.globalAlpha = (0.25 + 0.75 * e) * twinkle * fade;
+        ctx.globalAlpha = (0.5 + 0.5 * e) * twinkle * fade;
         ctx.fillStyle = boost > 0.05 ? "#fff3d6" : "#f4d190";
         ctx.beginPath();
         ctx.arc(x, y, p.r * (0.7 + 0.6 * e) * (1 + boost * 0.8), 0, 6.2832);
@@ -138,17 +138,18 @@ export default function Opening({ onDone }) {
     };
 
     const forced = new URLSearchParams(window.location.search).get("t");
-    document.fonts
-      .load('700 80px "Cinzel Decorative"')
-      .catch(() => {})
-      .then(() => {
-        build();
-        if (forced !== null) {
-          drawFrame(Math.min(1, Math.max(0, Number(forced))));
-        } else {
-          raf = requestAnimationFrame(frame);
-        }
-      });
+    const fontReady = Promise.race([
+      document.fonts.load('700 80px "Cinzel Decorative"').catch(() => {}),
+      new Promise((r) => setTimeout(r, 1200)),
+    ]);
+    fontReady.then(() => {
+      build();
+      if (forced !== null) {
+        drawFrame(Math.min(1, Math.max(0, Number(forced))));
+      } else {
+        raf = requestAnimationFrame(frame);
+      }
+    });
     window.addEventListener("resize", onResize);
 
     return () => {

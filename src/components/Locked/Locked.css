@@ -161,3 +161,20 @@
   .cd-cell { padding: 11px 4px 8px; border-radius: 13px; }
   .cd-label { font-size: .42rem; letter-spacing: .14em; }
 }
+.dev-unlock {
+  margin-top: 18px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px dashed rgba(255, 255, 255, .22);
+  background: transparent;
+  color: #8a7680;
+  font-size: .6rem;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all .25s;
+}
+.dev-unlock:hover {
+  color: #f5d79c;
+  border-color: rgba(240, 194, 124, .6);
+}

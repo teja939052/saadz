@@ -11,6 +11,7 @@ export const story = [
     aspect: "4 / 3",
     focus: { x: 46, y: 48 },
     accent: "#f0c27c",
+    voice: "./voice/01.mp3",
   },
   {
     id: "stars",
@@ -23,6 +24,7 @@ export const story = [
     aspect: "4 / 5",
     focus: { x: 50, y: 26 },
     accent: "#f6d58c",
+    voice: "./voice/02.mp3",
   },
   {
     id: "moon",
@@ -36,6 +38,7 @@ export const story = [
     aspect: "4 / 5",
     focus: { x: 50, y: 6 },
     accent: "#e9c58c",
+    voice: "./voice/03.mp3",
   },
   {
     id: "tiles",
@@ -48,6 +51,7 @@ export const story = [
     aspect: "4 / 3",
     focus: { x: 50, y: 46 },
     accent: "#cbb8c9",
+    voice: "./voice/04.mp3",
   },
   {
     id: "rays",
@@ -61,6 +65,7 @@ export const story = [
     aspect: "4 / 5",
     focus: { x: 50, y: 42 },
     accent: "#f0c27c",
+    voice: "./voice/05.mp3",
   },
   {
     id: "eighteen",
@@ -74,5 +79,49 @@ export const story = [
     aspect: "4 / 5",
     focus: { x: 50, y: 40 },
     accent: "#f0c27c",
+    voice: "./voice/06.mp3",
+  },
+  {
+    id: "calligraphy",
+    technique: "calligraphy",
+    src: "./memories/05.jpg",
+    kicker: "CHAPTER SEVEN",
+    title: "Your name, written in the night sky",
+    caption:
+      "Two scripts, one name. Every language I know says it the same way — and every one of them says it beautifully.",
+    arabic: "سَدَاء",
+    urdu: "صداء",
+    aspect: "1 / 1",
+    accent: "#f0c27c",
+    voice: "./voice/07.mp3",
+  },
+  {
+    id: "sadaa",
+    technique: "sadaa",
+    src: "./memories/02.jpg",
+    photos: [
+      "./memories/01.jpg",
+      "./memories/02.jpg",
+      "./memories/03.jpg",
+      "./memories/04.jpg",
+      "./memories/05.jpg",
+      "./memories/06.jpg",
+    ],
+    kicker: "CHAPTER EIGHT",
+    title: "Six stars, one word",
+    caption:
+      "Every photo is a star. Hang them in the sky together and they only ever spell one thing.",
+    aspect: "1 / 1",
+    accent: "#e05a8a",
+    voice: "./voice/08.mp3",
+  },
+  {
+    id: "letter",
+    component: "letter",
+    kicker: "CHAPTER NINE",
+    title: "One last thing",
+    caption: "Read it slowly. This part is only ever from me to you.",
+    accent: "#f0c27c",
+    voice: "./voice/09.mp3",
   },
 ];

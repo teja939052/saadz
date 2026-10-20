@@ -1,10 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { story } from "../../data/story.js";
 import Reveal from "./Reveal.jsx";
+import Letter from "./Letter.jsx";
+import VoiceNote from "./VoiceNote.jsx";
+import Scrubber from "./Scrubber.jsx";
 import "./Story.css";
 
 export default function StoryView({ onBack }) {
   const [active, setActive] = useState(0);
+  const [scrub, setScrub] = useState(null);
   const sectionRefs = useRef([]);
 
   useEffect(() => {
@@ -42,10 +46,18 @@ export default function StoryView({ onBack }) {
     function onKey(e) {
       if (e.key === "ArrowDown" || e.key === "PageDown") {
         e.preventDefault();
+        setScrub(null);
         goTo(active + 1);
       } else if (e.key === "ArrowUp" || e.key === "PageUp") {
         e.preventDefault();
+        setScrub(null);
         goTo(active - 1);
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        setScrub((s) => Math.min(1, (s === null ? 0 : s) + 0.08));
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        setScrub((s) => Math.max(0, (s === null ? 1 : s) - 0.08));
       } else if (e.key === "Escape") {
         onBack();
       }
@@ -85,7 +97,7 @@ export default function StoryView({ onBack }) {
           data-index="0"
           ref={(el) => (sectionRefs.current[0] = el)}
         >
-          <p className="eyebrow">A STORY IN SIX FRAMES</p>
+          <p className="eyebrow">A STORY IN NINE CHAPTERS</p>
           <h2 className="story-intro-title">
             for the girl who<br />
             <span>turns eighteen</span>
@@ -93,7 +105,7 @@ export default function StoryView({ onBack }) {
             tonight
           </h2>
           <p className="story-intro-sub">
-            Every photo below is rendered differently — because you have never been one
+            Every frame below is rendered differently — because you have never been one
             single kind of wonderful.
           </p>
           <div className="scroll-hint">
@@ -109,25 +121,51 @@ export default function StoryView({ onBack }) {
             data-index={i + 1}
             ref={(el) => (sectionRefs.current[i + 1] = el)}
           >
-            <div
-              className="chapter-frame"
-              style={{
-                "--frame-aspect": chapter.aspect || "4 / 5",
-                "--frame-width": chapter.aspect === "4 / 5" ? "min(74vw, 330px)" : "min(88vw, 520px)",
-              }}
-            >
-              <span className="chapter-number">{String(i + 1).padStart(2, "0")}</span>
-              <Reveal chapter={chapter} active={active === i + 1} />
-              <span className="chapter-glow" style={{ "--accent": chapter.accent }} />
-            </div>
+            {chapter.component === "letter" ? (
+              <div className="chapter-frame letter-frame" style={{ "--frame-aspect": "4 / 5" }}>
+                <Letter voice={chapter.voice} />
+              </div>
+            ) : (
+              <div
+                className="chapter-frame"
+                style={{
+                  "--frame-aspect": chapter.aspect || "4 / 5",
+                  "--frame-width":
+                    chapter.aspect === "4 / 5"
+                      ? "min(74vw, 330px)"
+                      : chapter.aspect === "1 / 1"
+                      ? "min(82vw, 420px)"
+                      : "min(88vw, 520px)",
+                }}
+              >
+                <span className="chapter-number">{String(i + 1).padStart(2, "0")}</span>
+                <Reveal
+                  chapter={chapter}
+                  active={active === i + 1}
+                  scrub={active === i + 1 ? scrub : null}
+                />
+                <span className="chapter-glow" style={{ "--accent": chapter.accent }} />
+              </div>
+            )}
+
             <div className="chapter-copy">
               <p className="eyebrow">{chapter.kicker}</p>
               <h3 className="chapter-title">{chapter.title}</h3>
               <p className="chapter-caption">{chapter.caption}</p>
+              {chapter.component !== "letter" && (
+                <VoiceNote text={chapter.caption} src={chapter.voice} />
+              )}
             </div>
           </section>
         ))}
       </div>
+
+      <Scrubber
+        chapters={story}
+        active={Math.max(0, active - 1)}
+        onScrub={setScrub}
+        onJump={goTo}
+      />
     </div>
   );
 }

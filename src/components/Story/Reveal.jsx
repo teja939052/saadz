@@ -74,12 +74,10 @@ function prepareSource(img, W, H, rotate, focus) {
   const rad = ((rotate || 0) * Math.PI) / 180;
   const quarter = Math.abs((rotate || 0) % 180) === 90;
 
-  // on-screen (post-rotation) dimensions
   const rotW = quarter ? img.naturalHeight : img.naturalWidth;
   const rotH = quarter ? img.naturalWidth : img.naturalHeight;
   const scale = Math.max(W / rotW, H / rotH);
 
-  // dimensions while drawing (pre-rotation)
   const drawW = (quarter ? rotH : rotW) * scale;
   const drawH = (quarter ? rotW : rotH) * scale;
 
@@ -123,21 +121,20 @@ function sampleGrid(source, cols, rows) {
       buckets.get(cell.color).push(cell);
     }
   }
-  return { cells, buckets, alpha: cells.length ? cells[0] : null };
+  return { cells, buckets };
 }
 
-/* ── Glyph sampling: points inside the digits "18" ──────────────── */
-function buildGlyphPoints(text, W, H, maxPoints) {
+/* ── Glyph sampling: points inside rendered text ─────────────────── */
+function buildTextPoints(text, W, H, maxPoints, font, yOffset = 0.5) {
   const c = document.createElement("canvas");
   c.width = W;
   c.height = H;
   const ctx = c.getContext("2d", { willReadFrequently: true });
-  const size = Math.min(H * 0.66, W * 1.05);
   ctx.fillStyle = "#fff";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.font = `700 ${size}px "Playfair Display", Georgia, "Times New Roman", serif`;
-  ctx.fillText(text, W / 2, H * 0.5);
+  ctx.font = font;
+  ctx.fillText(text, W / 2, H * yOffset);
   const data = ctx.getImageData(0, 0, W, H).data;
   const pts = [];
   for (let y = 0; y < H; y += 2) {
@@ -168,9 +165,8 @@ function eightPointStar(ctx, x, y, r) {
   ctx.beginPath();
   for (let k = 0; k < 2; k++) {
     const a = (k * Math.PI) / 4;
-    const cx = x + Math.cos(a) * 0;
     ctx.save();
-    ctx.translate(cx, y);
+    ctx.translate(x, y);
     ctx.rotate(a);
     ctx.rect(-r * 0.72, -r * 0.72, r * 1.44, r * 1.44);
     ctx.restore();
@@ -181,8 +177,8 @@ function eightPointStar(ctx, x, y, r) {
 function twinkleField(ctx, W, H, t, count, seedBase) {
   for (let i = 0; i < count; i++) {
     const s = seedBase + i * 12.9898;
-    const x = ((Math.sin(s) * 43758.5453) % 1 + 1) % 1 * W;
-    const y = ((Math.sin(s * 1.7) * 21378.1234) % 1 + 1) % 1 * H;
+    const x = (((Math.sin(s) * 43758.5453) % 1) + 1) % 1 * W;
+    const y = (((Math.sin(s * 1.7) * 21378.1234) % 1) + 1) % 1 * H;
     const tw = 0.35 + 0.65 * Math.abs(Math.sin(t * 2 + i));
     const r = 1.2 + (i % 4) * 0.9;
     ctx.save();
@@ -203,7 +199,6 @@ function renderDots(ctx, source, W, H, t, prep) {
   const base = Math.min(cw, ch);
   ctx.clearRect(0, 0, W, H);
 
-  // faint ghost of the photo so the shape reads through the dots
   ctx.globalAlpha = 0.16 * ease(clamp(t * 2));
   ctx.drawImage(source, 0, 0, W, H);
   ctx.globalAlpha = 1;
@@ -282,7 +277,6 @@ function renderMoon(ctx, source, W, H, t, prep) {
   const off = R * 0.52;
   const innerR = R * 0.94;
 
-  // crescent = outer disc minus an offset inner disc
   ctx.save();
   ctx.beginPath();
   ctx.arc(cx, cy, R, 0, Math.PI * 2);
@@ -291,7 +285,6 @@ function renderMoon(ctx, source, W, H, t, prep) {
   ctx.drawImage(source, 0, 0, W, H);
   ctx.restore();
 
-  // gold rim along the crescent edge
   ctx.save();
   ctx.globalCompositeOperation = "lighter";
   ctx.strokeStyle = `rgba(245, 215, 156, ${0.5 * p})`;
@@ -302,17 +295,6 @@ function renderMoon(ctx, source, W, H, t, prep) {
   ctx.beginPath();
   ctx.arc(cx + off, cy - off * 0.42, innerR, 0, Math.PI * 2);
   ctx.stroke();
-  ctx.restore();
-
-  ctx.save();
-  ctx.globalCompositeOperation = "lighter";
-  const g = ctx.createRadialGradient(cx, cy, R * 0.2, cx, cy, R * 1.25);
-  g.addColorStop(0, `rgba(255, 214, 150, ${0.2 * p})`);
-  g.addColorStop(1, "rgba(255, 214, 150, 0)");
-  ctx.fillStyle = g;
-  ctx.beginPath();
-  ctx.arc(cx, cy, R * 1.3, 0, Math.PI * 2);
-  ctx.fill();
   ctx.restore();
 
   twinkleField(ctx, W, H, t, 38, 11.2);
@@ -387,7 +369,7 @@ function renderRays(ctx, source, W, H, t, prep) {
   ctx.save();
   ctx.globalCompositeOperation = "lighter";
   for (const b of prep.bokeh) {
-    const y = ((b.y - t * b.sp) % 1 + 1) % 1;
+    const y = (((b.y - t * b.sp) % 1) + 1) % 1;
     const x = b.x * W + Math.sin(t * 1.4 + b.r) * 8;
     const yy = y * H;
     const g = ctx.createRadialGradient(x, yy, 0, x, yy, b.r * 2.6);
@@ -406,14 +388,20 @@ function renderEighteen(ctx, source, W, H, t, prep) {
   ctx.clearRect(0, 0, W, H);
 
   if (!prep.glyph) {
-    prep.glyph = buildGlyphPoints("18", W, H, 2200);
+    prep.glyph = buildTextPoints(
+      "18",
+      W,
+      H,
+      2200,
+      `700 ${Math.min(H * 0.66, W * 1.05)}px "Playfair Display", Georgia, serif`
+    );
     prep.photo = sampleGrid(source, 72, 90);
   }
   const glyph = prep.glyph;
   const allCells = prep.photo.cells;
   const count = Math.min(glyph.length, allCells.length);
   if (!count) return;
-  // deterministic random spread so the dots cover the photo evenly (no stripes)
+
   if (!prep.spread) {
     const order = allCells.map((_, i) => i);
     let seed = 1337;
@@ -480,19 +468,185 @@ function renderEighteen(ctx, source, W, H, t, prep) {
   }
 }
 
+/* ── Technique 7: her name in Arabic + Urdu calligraphy ─────────── */
+function renderCalligraphy(ctx, W, H, t, prep, chapter) {
+  ctx.clearRect(0, 0, W, H);
+  if (!prep.glyphs) {
+    const size = Math.min(H * 0.2, W * 0.22);
+    prep.glyphs = {
+      arabic: buildTextPoints(
+        chapter.arabic || "",
+        W,
+        H,
+        1500,
+        `400 ${size}px "Amiri", "Noto Nastaliq Urdu", serif`,
+        0.36
+      ),
+      urdu: buildTextPoints(
+        chapter.urdu || "",
+        W,
+        H,
+        1200,
+        `400 ${size * 1.05}px "Noto Nastaliq Urdu", "Amiri", serif`,
+        0.68
+      ),
+    };
+  }
+
+  const groups = [
+    { pts: prep.glyphs.arabic, y: 0.3, delay: 0 },
+    { pts: prep.glyphs.urdu, y: 0.62, delay: 0.35 },
+  ];
+
+  for (const group of groups) {
+    const pts = group.pts;
+    for (let i = 0; i < pts.length; i++) {
+      const p = clamp((t - group.delay) / 0.6);
+      if (p <= 0) continue;
+      const e = ease(p);
+      const seedX = Math.abs((Math.sin(i * 91.7) * 12345.6) % 1);
+      const seedY = Math.abs((Math.sin(i * 45.3) * 9876.5) % 1);
+      const x = pts[i].x + (seedX - 0.5) * 90 * (1 - e);
+      const y = pts[i].y + (seedY - 0.5) * 60 * (1 - e);
+      const tw = 0.75 + 0.25 * Math.sin(t * 3 + i);
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      ctx.fillStyle = `rgba(255, 214, 150, ${0.85 * tw})`;
+      ctx.beginPath();
+      ctx.arc(x, y, 1.9, 0, 6.2832);
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  // soft gold glow behind the calligraphy
+  const g = ctx.createRadialGradient(W / 2, H * 0.5, 0, W / 2, H * 0.5, W * 0.5);
+  g.addColorStop(0, `rgba(240, 194, 124, ${0.14 * ease(clamp(t * 1.4))})`);
+  g.addColorStop(1, "rgba(240, 194, 124, 0)");
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, W, H);
+
+  twinkleField(ctx, W, H, t, 40, 55.1);
+}
+
+/* ── Technique 8: six photo-stars in a "SADAA" constellation ─────── */
+function renderSadaa(ctx, W, H, t, prep, chapter) {
+  ctx.clearRect(0, 0, W, H);
+
+  if (!prep.letters) {
+    const size = Math.min(H * 0.22, W * 0.5);
+    prep.letters = buildTextPoints(
+      "SADAA",
+      W,
+      H,
+      1600,
+      `italic 600 ${size}px "Playfair Display", Georgia, serif`,
+      0.3
+    );
+  }
+
+  const p = ease(clamp(t * 1.2));
+  ctx.save();
+  ctx.globalCompositeOperation = "lighter";
+  for (let i = 0; i < prep.letters.length; i++) {
+    const pt = prep.letters[i];
+    const tw = 0.35 + 0.65 * Math.abs(Math.sin(t * 2.2 + i * 0.4));
+    const r = 1.3 + ((i % 5) * 0.35);
+    ctx.fillStyle = `rgba(255, 224, 170, ${0.85 * p * tw})`;
+    ctx.beginPath();
+    ctx.arc(pt.x, pt.y, r, 0, 6.2832);
+    ctx.fill();
+  }
+  ctx.restore();
+
+  // photo stars
+  const photos = prep.photos || [];
+  const spots = [
+    { x: 0.16, y: 0.66 },
+    { x: 0.3, y: 0.78 },
+    { x: 0.47, y: 0.62 },
+    { x: 0.64, y: 0.8 },
+    { x: 0.78, y: 0.64 },
+    { x: 0.9, y: 0.82 },
+  ];
+  const r = Math.min(W, H) * 0.075;
+
+  for (let i = 0; i < photos.length; i++) {
+    const img = photos[i];
+    const s = spots[i] || spots[0];
+    const px = s.x * W;
+    const py = s.y * H;
+    const appear = clamp((t - 0.25 - i * 0.08) / 0.35);
+    if (appear <= 0) continue;
+    const e = ease(appear);
+    const rr = r * e;
+
+    if (i > 0) {
+      const prev = spots[i - 1];
+      ctx.save();
+      ctx.strokeStyle = `rgba(240, 194, 124, ${0.28 * e})`;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(prev.x * W, prev.y * H);
+      ctx.lineTo(px, py);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter";
+    const g = ctx.createRadialGradient(px, py, rr * 0.6, px, py, rr * 2.4);
+    g.addColorStop(0, `rgba(255, 206, 140, ${0.4 * e})`);
+    g.addColorStop(1, "rgba(255, 206, 140, 0)");
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(px, py, rr * 2.4, 0, 6.2832);
+    ctx.fill();
+    ctx.restore();
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(px, py, rr, 0, 6.2832);
+    ctx.closePath();
+    ctx.clip();
+    ctx.globalAlpha = e;
+    ctx.drawImage(img, px - rr, py - rr, rr * 2, rr * 2);
+    ctx.restore();
+
+    ctx.save();
+    ctx.strokeStyle = `rgba(245, 215, 156, ${0.8 * e})`;
+    ctx.lineWidth = 1.3;
+    ctx.beginPath();
+    ctx.arc(px, py, rr, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  twinkleField(ctx, W, H, t, 30, 88.2);
+}
+
 /* ── Component ───────────────────────────────────────────────────── */
-export default function Reveal({ chapter, active }) {
+export default function Reveal({ chapter, active, scrub }) {
   const canvasRef = useRef(null);
   const [status, setStatus] = useState("loading");
   const [sizeKey, setSizeKey] = useState(0);
   const prepRef = useRef({});
+  const lastT = useRef(0);
 
   useEffect(() => {
     let alive = true;
     setStatus("loading");
     prepRef.current = {};
 
-    loadImage(chapter.src)
+    const fonts = [];
+    if (chapter.technique === "calligraphy") {
+      fonts.push(document.fonts.load('400 80px "Amiri"'));
+      fonts.push(document.fonts.load('400 80px "Noto Nastaliq Urdu"'));
+    }
+
+    Promise.all(fonts)
+      .catch(() => {})
+      .then(() => loadImage(chapter.src))
       .then(async (img) => {
         if (!alive) return;
         if (document.fonts && document.fonts.ready) {
@@ -512,8 +666,15 @@ export default function Reveal({ chapter, active }) {
         const H = Math.max(1, Math.round(rect.height * dpr));
         canvas.width = W;
         canvas.height = H;
-        const source = prepareSource(img, W, H, chapter.rotate, chapter.focus);
-        prepRef.current = { source, W, H };
+
+        const prep = { source: null, W, H };
+        if (chapter.technique !== "calligraphy" && chapter.technique !== "sadaa") {
+          prep.source = prepareSource(img, W, H, chapter.rotate, chapter.focus);
+        }
+        if (chapter.photos) {
+          prep.photos = await Promise.all(chapter.photos.map((p) => loadImage(p).catch(() => null)));
+        }
+        prepRef.current = prep;
         setStatus("ready");
       })
       .catch(() => alive && setStatus("error"));
@@ -521,7 +682,7 @@ export default function Reveal({ chapter, active }) {
     return () => {
       alive = false;
     };
-  }, [chapter.src, chapter.rotate, sizeKey]);
+  }, [chapter.src, chapter.rotate, chapter.technique, sizeKey]);
 
   useEffect(() => {
     let timer;
@@ -541,7 +702,7 @@ export default function Reveal({ chapter, active }) {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
     const prep = prepRef.current;
-    if (!canvas || !prep.source) return;
+    if (!canvas || !prep) return;
 
     const reduced =
       window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -551,6 +712,7 @@ export default function Reveal({ chapter, active }) {
     let start = 0;
 
     function draw(t) {
+      lastT.current = t;
       switch (chapter.technique) {
         case "stars":
           renderStars(ctx, prep.source, prep.W, prep.H, t, prep);
@@ -567,6 +729,12 @@ export default function Reveal({ chapter, active }) {
         case "eighteen":
           renderEighteen(ctx, prep.source, prep.W, prep.H, t, prep);
           break;
+        case "calligraphy":
+          renderCalligraphy(ctx, prep.W, prep.H, t, prep, chapter);
+          break;
+        case "sadaa":
+          renderSadaa(ctx, prep.W, prep.H, t, prep, chapter);
+          break;
         default:
           renderDots(ctx, prep.source, prep.W, prep.H, t, prep);
       }
@@ -574,23 +742,27 @@ export default function Reveal({ chapter, active }) {
 
     function frame(now) {
       if (!start) start = now;
-      const t = Math.min(1, (now - start) / duration);
+      const from = lastT.current;
+      const elapsed = (now - start) / duration;
+      const t = from + (1 - from) * Math.min(1, elapsed);
       draw(t);
       if (t < 1) raf = requestAnimationFrame(frame);
     }
 
-    if (forced !== null) {
+    if (scrub !== null && scrub !== undefined) {
+      draw(Math.min(1, Math.max(0, scrub)));
+    } else if (forced !== null) {
       draw(Math.min(1, Math.max(0, Number(forced))));
     } else if (reduced) {
       draw(1);
     } else if (active) {
       raf = requestAnimationFrame(frame);
     } else {
-      draw(0);
+      draw(lastT.current);
     }
 
     return () => cancelAnimationFrame(raf);
-  }, [status, active, chapter.technique]);
+  }, [status, active, chapter.technique, scrub]);
 
   return (
     <div className={`reveal ${status}`}>

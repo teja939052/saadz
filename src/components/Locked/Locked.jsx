@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { UNLOCK_AT, UNLOCK_TITLE, UNLOCK_SUB, timeLeft, unlockLabel } from "../../data/unlock.js";
-import Particles from "../Particles.jsx";
+import StarField from "../StarField.jsx";
 import "./Locked.css";
 
 const UNITS = [
@@ -33,7 +33,7 @@ export default function Locked({ onUnlocked }) {
 
   return (
     <main className="locked">
-      <Particles />
+      <StarField nameAlpha={0.75} />
 
       <section className="lock-panel">
         <div className="lock-seal">

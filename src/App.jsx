@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import "./App.css";
 import StoryView from "./components/Story/StoryView.jsx";
-import Particles from "./components/Particles.jsx";
+import StarField from "./components/StarField.jsx";
 import Locked from "./components/Locked/Locked.jsx";
 import Opening from "./components/Opening/Opening.jsx";
 import "./components/Opening/Opening.css";
@@ -150,7 +150,10 @@ function WishScreen({ onWish }) {
 
 // ─── Main App ─────────────────────────────────────────────────────
 export default function App() {
-  const [phase, setPhase] = useState("opening"); // opening | intro | wish | experience | story
+  const [phase, setPhase] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("skip") === "1" ? "intro" : "opening";
+  }); // opening | intro | wish | experience | story
   const [index, setIndex] = useState(0);
   const [showNote, setShowNote] = useState(false);
   const [hearts, setHearts] = useState(false);
@@ -173,7 +176,7 @@ export default function App() {
 
   return (
     <main className="page">
-      <Particles />
+      <StarField />
       <ConfettiBurst trigger={confetti} />
 
       {phase === "intro" && (

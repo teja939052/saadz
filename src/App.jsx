@@ -3,6 +3,8 @@ import "./App.css";
 import StoryView from "./components/Story/StoryView.jsx";
 import Particles from "./components/Particles.jsx";
 import Locked from "./components/Locked/Locked.jsx";
+import Opening from "./components/Opening/Opening.jsx";
+import "./components/Opening/Opening.css";
 import { UNLOCK_AT, isUnlocked } from "./data/unlock.js";
 
 const wishes = [
@@ -148,7 +150,7 @@ function WishScreen({ onWish }) {
 
 // ─── Main App ─────────────────────────────────────────────────────
 export default function App() {
-  const [phase, setPhase] = useState("intro"); // intro | wish | experience | story
+  const [phase, setPhase] = useState("opening"); // opening | intro | wish | experience | story
   const [index, setIndex] = useState(0);
   const [showNote, setShowNote] = useState(false);
   const [hearts, setHearts] = useState(false);
@@ -164,6 +166,10 @@ export default function App() {
   }
 
   if (!unlocked) return <Locked onUnlocked={() => setUnlocked(true)} />;
+
+  if (phase === "opening") {
+    return <Opening onDone={() => setPhase("intro")} />;
+  }
 
   return (
     <main className="page">

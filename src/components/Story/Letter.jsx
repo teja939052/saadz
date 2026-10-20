@@ -16,7 +16,7 @@ export default function Letter({ voice }) {
               {line.trim()}.
             </p>
           ))}          <div className="letter-sign">
-            <span className="letter-sig">Bhanu Teja</span>
+            <span className="letter-sig dune-sm">Bhanu Teja</span>
             <span className="letter-seal">✦</span>
           </div>
           <p className="letter-keep">keep this one forever ♡</p>

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Dancing+Script:wght@400;500;600;700&family=Amiri:wght@400;700&family=Noto+Nastaliq+Urdu:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Dancing+Script:wght@400;500;600;700&family=Amiri:wght@400;700&family=Noto+Nastaliq+Urdu:wght@400;600&family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&display=swap');
 
 /* ── Reset & Base ── */
 :root {
@@ -617,3 +617,56 @@ footer span { color: #e5a3b4; margin-left: 6px; }
 }
 
 @media (prefers-reduced-motion: reduce) { *,*::before,*::after { animation-duration:.01ms !important; animation-delay:0s !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; } }
+
+/* ── Movie-title typography (Dune-style) ── */
+:root {
+  --display: 'Cinzel Decorative', 'Cinzel', 'Trajan Pro', Georgia, serif;
+}
+.dune {
+  font-family: var(--display);
+  font-weight: 700;
+  font-style: normal;
+  text-transform: uppercase;
+  letter-spacing: .13em;
+  background: linear-gradient(180deg, #fff6e2 0%, #f5d79c 34%, #d99554 60%, #f0c27c 82%, #a86c2c 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 20px rgba(240, 194, 124, .35));
+}
+.dune-sm {
+  font-family: var(--display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .3em;
+  font-size: .58rem;
+  background: linear-gradient(180deg, #fff2d4, #e0ab63);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Title card: hairline rules + diamond ornament, like a film title */
+.title-card {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.title-card::before,
+.title-card::after {
+  content: '';
+  display: block;
+  width: min(320px, 74%);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(240, 194, 124, .6), transparent);
+}
+.title-card .ornament {
+  font-size: .7rem;
+  color: var(--gold, #f0c27c);
+  text-shadow: 0 0 14px rgba(240, 194, 124, .6);
+}
+
+.intro-name { letter-spacing: .16em; }
+.name-glow.dune { background-image: linear-gradient(180deg, #fff6e2 0%, #f5d79c 34%, #d99554 60%, #f0c27c 82%, #a86c2c 100%); }

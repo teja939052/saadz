@@ -125,7 +125,7 @@ function sampleGrid(source, cols, rows) {
 }
 
 /* ── Glyph sampling: points inside rendered text ─────────────────── */
-function buildTextPoints(text, W, H, maxPoints, font, yOffset = 0.5) {
+function buildTextPoints(text, W, H, maxPoints, font, yOffset = 0.5, tracking = "0em") {
   const c = document.createElement("canvas");
   c.width = W;
   c.height = H;
@@ -134,6 +134,7 @@ function buildTextPoints(text, W, H, maxPoints, font, yOffset = 0.5) {
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.font = font;
+  if ("letterSpacing" in ctx) ctx.letterSpacing = tracking;
   ctx.fillText(text, W / 2, H * yOffset);
   const data = ctx.getImageData(0, 0, W, H).data;
   const pts = [];
@@ -393,7 +394,9 @@ function renderEighteen(ctx, source, W, H, t, prep) {
       W,
       H,
       2200,
-      `700 ${Math.min(H * 0.66, W * 1.05)}px "Playfair Display", Georgia, serif`
+      `700 ${Math.min(H * 0.66, W * 1.05)}px "Cinzel Decorative", "Cinzel", Georgia, serif`,
+      0.5,
+      "0.04em"
     );
     prep.photo = sampleGrid(source, 72, 90);
   }
@@ -534,14 +537,15 @@ function renderSadaa(ctx, W, H, t, prep, chapter) {
   ctx.clearRect(0, 0, W, H);
 
   if (!prep.letters) {
-    const size = Math.min(H * 0.22, W * 0.5);
+    const size = Math.min(H * 0.2, W * 0.42);
     prep.letters = buildTextPoints(
       "SADAA",
       W,
       H,
       1600,
-      `italic 600 ${size}px "Playfair Display", Georgia, serif`,
-      0.3
+      `700 ${size}px "Cinzel Decorative", "Cinzel", Georgia, serif`,
+      0.3,
+      "0.1em"
     );
   }
 
@@ -642,6 +646,10 @@ export default function Reveal({ chapter, active, scrub }) {
     if (chapter.technique === "calligraphy") {
       fonts.push(document.fonts.load('400 80px "Amiri"'));
       fonts.push(document.fonts.load('400 80px "Noto Nastaliq Urdu"'));
+    }
+    if (chapter.technique === "eighteen" || chapter.technique === "sadaa") {
+      fonts.push(document.fonts.load('700 80px "Cinzel Decorative"'));
+      fonts.push(document.fonts.load('700 80px "Cinzel"'));
     }
 
     Promise.all(fonts)

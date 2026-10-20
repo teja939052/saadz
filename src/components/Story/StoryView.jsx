@@ -98,12 +98,16 @@ export default function StoryView({ onBack }) {
           ref={(el) => (sectionRefs.current[0] = el)}
         >
           <p className="eyebrow">A STORY IN NINE CHAPTERS</p>
-          <h2 className="story-intro-title">
-            for the girl who<br />
-            <span>turns eighteen</span>
-            <br />
-            tonight
-          </h2>
+          <div className="title-card">
+            <h2 className="story-intro-title">
+              for the girl who
+              <br />
+              <span>turns eighteen</span>
+              <br />
+              tonight
+            </h2>
+            <span className="ornament">✦</span>
+          </div>
           <p className="story-intro-sub">
             Every frame below is rendered differently — because you have never been one
             single kind of wonderful.

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import "./App.css";
-import MemoriesView from "./components/Memories/MemoriesView.jsx";
+import StoryView from "./components/Story/StoryView.jsx";
 
 const wishes = [
   { language: "English", greeting: "Happy Birthday, Sadaa!", message: "May this new chapter bring you beautiful surprises, brave dreams, and a hundred little reasons to smile." },
@@ -268,7 +268,7 @@ function WishScreen({ onWish }) {
 
 // ─── Main App ─────────────────────────────────────────────────────
 export default function App() {
-  const [phase, setPhase] = useState("intro"); // intro | wish | experience | memories
+  const [phase, setPhase] = useState("intro"); // intro | wish | experience | story
   const [index, setIndex] = useState(0);
   const [showNote, setShowNote] = useState(false);
   const [hearts, setHearts] = useState(false);
@@ -334,8 +334,13 @@ export default function App() {
           </div>
 
           <p className="eyebrow">TODAY, THE WORLD CELEBRATES YOU</p>
+          <div className="eighteen-badge">
+            <span className="badge-star">✦</span>
+            <span>TURNING EIGHTEEN TONIGHT</span>
+            <span className="badge-star">✦</span>
+          </div>
           <h1 className="birthday-title">
-            Happy Birthday,<br />
+            Happy 18th Birthday,<br />
             <span className="name-glow">Sadaa.</span>
           </h1>
 
@@ -355,8 +360,8 @@ export default function App() {
             <button className="secondary" onClick={() => setShowNote((v) => !v)}>
               {showNote ? "Close note" : "💌 One little note"}
             </button>
-            <button className="secondary sky-btn" onClick={() => setPhase("memories")}>
-              ✦ Our little sky
+            <button className="secondary sky-btn" onClick={() => setPhase("story")}>
+              ✦ Our story
             </button>
           </div>
 
@@ -384,7 +389,7 @@ export default function App() {
         </section>
       )}
 
-      {phase === "memories" && <MemoriesView onBack={() => setPhase("experience")} />}
+      {phase === "story" && <StoryView onBack={() => setPhase("experience")} />}
 
       <footer>
         FOR SADAA, WITH GOOD VIBES ONLY <span>♡</span> · A SURPRISE BY BHANU TEJAA

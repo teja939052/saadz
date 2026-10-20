@@ -69,6 +69,28 @@ footer span { color: #e5a3b4; margin-left: 6px; }
 .credit span { color: var(--gold); font-weight: 700; letter-spacing: .2em; }
 .sky-btn { border-color: rgba(240, 194, 124, .35); }
 .sky-btn:hover { border-color: rgba(240, 194, 124, .7); box-shadow: 0 0 24px rgba(240, 194, 124, .18); }
+.eighteen-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin: 14px auto 4px;
+  padding: 8px 18px;
+  border: 1px solid rgba(240, 194, 124, .38);
+  border-radius: 999px;
+  background: linear-gradient(120deg, rgba(240, 194, 124, .14), rgba(224, 90, 138, .1));
+  color: var(--gold);
+  font-size: .62rem;
+  letter-spacing: .28em;
+  font-weight: 700;
+  text-transform: uppercase;
+  box-shadow: 0 0 30px rgba(240, 194, 124, .12);
+  animation: badgeBreathe 3.4s ease-in-out infinite;
+}
+.badge-star { color: #f4a4b7; font-size: .8rem; }
+@keyframes badgeBreathe {
+  0%, 100% { box-shadow: 0 0 24px rgba(240, 194, 124, .1); }
+  50% { box-shadow: 0 0 44px rgba(240, 194, 124, .26); }
+}
 .slide-up { animation: slideUp .8s cubic-bezier(.22,1,.36,1) both; }
 @keyframes slideUp {
   from { opacity: 0; transform: translateY(40px) scale(.97); }

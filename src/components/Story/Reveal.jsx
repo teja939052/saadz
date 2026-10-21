@@ -520,7 +520,7 @@ function renderSadaa(ctx, W, H, t, prep, chapter) {
       W,
       H,
       1600,
-      `700 ${size}px "Cinzel Decorative", "Cinzel", Georgia, serif`,
+      `400 ${size}px "Dune Rise", "Cinzel Decorative", "Cinzel", Georgia, serif`,
       0.3,
       "0.1em"
     );
@@ -625,6 +625,7 @@ export default function Reveal({ chapter, active, scrub }) {
       fonts.push(document.fonts.load('400 80px "Noto Nastaliq Urdu"'));
     }
     if (chapter.technique === "eighteen" || chapter.technique === "sadaa") {
+      fonts.push(document.fonts.load('400 80px "Dune Rise"'));
       fonts.push(document.fonts.load('700 80px "Cinzel Decorative"'));
       fonts.push(document.fonts.load('700 80px "Cinzel"'));
     }

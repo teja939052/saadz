@@ -51,7 +51,7 @@ export default function StarField({ label = "SADAA", nameAlpha = 0.9, dust = 240
             W,
             H,
             1100,
-            `700 ${size}px "Cinzel Decorative", "Cinzel", Georgia, serif`,
+            `400 ${size}px "Dune Rise", "Cinzel Decorative", "Cinzel", Georgia, serif`,
             0.46,
             "0.1em"
           )
@@ -216,8 +216,11 @@ export default function StarField({ label = "SADAA", nameAlpha = 0.9, dust = 240
     window.addEventListener("resize", onResize);
 
     const fontReady = Promise.race([
-      document.fonts.load('700 80px "Cinzel Decorative"').catch(() => {}),
-      new Promise((r) => setTimeout(r, 1200)),
+      Promise.all([
+        document.fonts.load('400 80px "Dune Rise"').catch(() => {}),
+        document.fonts.load('700 80px "Cinzel Decorative"').catch(() => {}),
+      ]).catch(() => {}),
+      new Promise((r) => setTimeout(r, 1400)),
     ]);
     fontReady.then(() => {
       build();

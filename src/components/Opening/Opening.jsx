@@ -47,7 +47,7 @@ export default function Opening({ onDone }) {
         W,
         H,
         COUNT,
-        `700 ${size}px "Cinzel Decorative", "Cinzel", Georgia, serif`,
+        `400 ${size}px "Dune Rise", "Cinzel Decorative", "Cinzel", Georgia, serif`,
         0.46,
         "0.1em"
       );
@@ -173,8 +173,11 @@ export default function Opening({ onDone }) {
 
     const forced = new URLSearchParams(window.location.search).get("t");
     const fontReady = Promise.race([
-      document.fonts.load('700 80px "Cinzel Decorative"').catch(() => {}),
-      new Promise((r) => setTimeout(r, 1200)),
+      Promise.all([
+        document.fonts.load('400 80px "Dune Rise"').catch(() => {}),
+        document.fonts.load('700 80px "Cinzel Decorative"').catch(() => {}),
+      ]).catch(() => {}),
+      new Promise((r) => setTimeout(r, 1400)),
     ]);
     fontReady.then(() => {
       build();

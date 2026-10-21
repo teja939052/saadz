@@ -35,8 +35,9 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 16px 20px;
-  background: linear-gradient(rgba(10, 7, 16, .8), transparent);
+  padding: 14px 20px;
+  background: linear-gradient(rgba(10, 7, 16, .85), rgba(10, 7, 16, .25) 70%, transparent);
+  backdrop-filter: blur(5px);
   pointer-events: none;
 }
 .story-top > * { pointer-events: auto; }
@@ -246,7 +247,7 @@
   font-family: 'Dancing Script', cursive;
   font-size: clamp(1.05rem, 3.2vw, 1.32rem);
   line-height: 1.65;
-  color: #cdbab5;
+  color: #dcc9c4;
 }
 
 /* â”€â”€ Mobile â”€â”€ */
@@ -431,8 +432,10 @@
   max-width: 620px;
   margin: 0 auto;
   border-radius: 12px;
-  background: rgba(255, 255, 255, .05);
-  border: 1px solid rgba(255, 255, 255, .1);
+  background: rgba(255, 255, 255, .06);
+  border: 1px solid rgba(255, 255, 255, .12);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .35);
+  backdrop-filter: blur(8px);
   pointer-events: auto;
   cursor: ew-resize;
   touch-action: none;

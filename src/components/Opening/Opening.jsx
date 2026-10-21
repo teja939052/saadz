@@ -29,7 +29,7 @@ export default function Opening({ onDone }) {
     let raf = 0;
     let particles = [];
 
-    const COUNT = 3200;
+    const COUNT = 2600;
     const DURATION = 3400;
     const HOLD = 1100;
 
@@ -73,7 +73,14 @@ export default function Opening({ onDone }) {
       }
     }
 
+    const frameSkip = 28; // waiting screen draws at ~30fps; the gather itself runs full speed
+    let lastFrame = 0;
+
     function frame(now) {
+      raf = requestAnimationFrame(frame);
+      if (now - lastFrame < (started.current ? 0 : frameSkip)) return;
+      lastFrame = now;
+
       if (started.current && !startedAt.current) startedAt.current = now;
       const t = started.current ? clamp((now - startedAt.current) / DURATION) : 0;
 
@@ -84,9 +91,8 @@ export default function Opening({ onDone }) {
           finished.current = true;
           window.setTimeout(() => onDoneRef.current(), HOLD);
         }
-        return;
+        cancelAnimationFrame(raf);
       }
-      raf = requestAnimationFrame(frame);
     }
 
     function draw(t, now) {
@@ -120,25 +126,36 @@ export default function Opening({ onDone }) {
         }
 
         p.tw += p.twSpeed;
-        const twinkle = 0.6 + 0.4 * Math.sin(p.tw);
+        const twinkle = 0.74 + 0.26 * Math.sin(p.tw);
 
         const near = 1 - Math.min(1, Math.abs(x - sweepX) / (W * 0.09));
         const boost = near * near * clamp((t - 0.5) / 0.4);
 
-        const r = p.r * (0.75 + 0.6 * e);
-        const alpha = (0.55 + 0.45 * e) * twinkle;
+        const r = p.r * (0.8 + 0.6 * e);
+        const alpha = (0.7 + 0.3 * e) * twinkle;
 
-        ctx.globalAlpha = alpha * 0.2;
-        ctx.fillStyle = boost > 0.05 ? "#fff3d6" : "#e8b45f";
-        ctx.beginPath();
-        ctx.arc(x, y, r * 3.6, 0, 6.2832);
-        ctx.fill();
+        // bloom — only on stars near the sweep or nearly landed
+        if (boost > 0.04 || e > 0.85) {
+          ctx.globalAlpha = alpha * 0.24;
+          ctx.fillStyle = boost > 0.05 ? "#fff3d6" : "#e8b45f";
+          ctx.beginPath();
+          ctx.arc(x, y, r * 3.8, 0, 6.2832);
+          ctx.fill();
+        }
 
         ctx.globalAlpha = alpha;
-        ctx.fillStyle = boost > 0.05 ? "#fff8e8" : "#f6d190";
+        ctx.fillStyle = boost > 0.05 ? "#fff8e8" : "#f8d89e";
         ctx.beginPath();
         ctx.arc(x, y, r * (1 + boost * 0.7), 0, 6.2832);
         ctx.fill();
+
+        if (r > 0.9) {
+          ctx.globalAlpha = Math.min(1, alpha * 1.25);
+          ctx.fillStyle = "#fffdf4";
+          ctx.beginPath();
+          ctx.arc(x, y, Math.max(0.65, r * 0.4), 0, 6.2832);
+          ctx.fill();
+        }
       }
       ctx.restore();
     }

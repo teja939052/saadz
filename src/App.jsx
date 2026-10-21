@@ -176,7 +176,7 @@ export default function App() {
 
   return (
     <main className="page">
-      <StarField nameAlpha={phase === "intro" ? 0.95 : 0.72} />
+      <StarField nameAlpha={phase === "intro" ? 1.15 : 0.9} />
       <ConfettiBurst trigger={confetti} />
 
       {phase === "intro" && (

@@ -229,11 +229,11 @@ export default function App() {
           <p className="eyebrow">TODAY, THE WORLD CELEBRATES YOU</p>
           <div className="eighteen-badge">
             <span className="badge-star">✦</span>
-            <span>TURNING EIGHTEEN TONIGHT</span>
+            <span>TURNING NINETEEN TONIGHT</span>
             <span className="badge-star">✦</span>
           </div>
           <h1 className="birthday-title">
-            Happy 18th Birthday,
+            Happy 19th Birthday,
             <br />
             <span className="dune name-glow">Sadaa</span>          </h1>
 

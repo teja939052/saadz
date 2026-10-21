@@ -1,7 +1,7 @@
 import VoiceNote from "./VoiceNote.jsx";
 
 const letterText =
-  "Sadaa, if you are reading this, the candles are out, the wish is already made, and somewhere in this little piece of code I am still smiling at you. Eighteen is not a number that describes you — it is only the year the sky gained another star. I hope this year is gentle with you, and loud in the good ways. I hope you keep the people who show up, and become the person who shows up for others. Keep the photographs, the laughter, and the bad days too, because I promise you the bad days are what make the good ones glow. You were always the best part of every room, Sadaa. Happy eighteenth, my person.";
+  "Sadaa, if you are reading this, the candles are out, the wish is already made, and somewhere in this little piece of code I am still smiling at you. Nineteen is not a number that describes you — it is only the year the sky gained another star. I hope this year is gentle with you, and loud in the good ways. I hope you keep the people who show up, and become the person who shows up for others. Keep the photographs, the laughter, and the bad days too, because I promise you the bad days are what make the good ones glow. You were always the best part of every room, Sadaa. Happy nineteenth, my person.";
 
 export default function Letter({ voice }) {
   return (

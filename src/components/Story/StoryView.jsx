@@ -102,7 +102,7 @@ export default function StoryView({ onBack }) {
             <h2 className="story-intro-title">
               for the girl who
               <br />
-              <span>turns eighteen</span>
+              <span>turns nineteen</span>
               <br />
               tonight
             </h2>

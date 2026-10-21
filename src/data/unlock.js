@@ -3,7 +3,7 @@ export const UNLOCK_AT = "2026-10-22T00:00:00";
 
 export const UNLOCK_TITLE = "Not yet, Sadaa.";
 export const UNLOCK_SUB =
-  "This one waits for midnight. The 22nd of October — the moment the day turns over and you become officially eighteen.";
+  "This one waits for midnight. The 22nd of October — the moment the day turns over and you become officially nineteen.";
 
 export function unlockLabel(target) {
   const d = new Date(target);

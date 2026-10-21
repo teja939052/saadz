@@ -361,13 +361,13 @@ function renderRays(ctx, source, W, H, t, prep) {
   ctx.restore();
 }
 
-/* ── Technique 6: particles spell "18", then morph into her face ─── */
+/* ── Technique 6: particles spell "19", then morph into her face ─── */
 function renderEighteen(ctx, source, W, H, t, prep) {
   ctx.clearRect(0, 0, W, H);
 
   if (!prep.glyph) {
     prep.glyph = buildTextPoints(
-      "18",
+      "19",
       W,
       H,
       2200,

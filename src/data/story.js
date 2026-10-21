@@ -72,7 +72,7 @@ export const story = [
     technique: "eighteen",
     src: "./memories/06.jpg",
     kicker: "CHAPTER SIX",
-    title: "And then, eighteen",
+    title: "And then, nineteen",
     caption:
       "Seventeen chapters behind you. One whole sky ahead. Tonight the stars spell your age, and then they turn into your face.",
     rotate: 0,

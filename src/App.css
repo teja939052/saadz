@@ -621,6 +621,19 @@ footer span { color: #eaa9b8; margin-left: 6px; }
   -webkit-text-fill-color: transparent;
 }
 
+/* Dune Rise — the actual movie font, for the sealed title */
+.dune-rise {
+  font-family: 'Dune Rise', 'Cinzel Decorative', serif;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: .13em;
+  background: linear-gradient(180deg, #fff6e2 0%, #f5d79c 38%, #d99554 70%, #f0c27c 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 18px rgba(240, 194, 124, .3));
+}
+
 /* Title card: hairline rules + diamond ornament, like a film title */
 .title-card {
   position: relative;

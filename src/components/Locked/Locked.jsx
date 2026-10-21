@@ -47,7 +47,7 @@ export default function Locked({ onUnlocked }) {
         <div className="title-card">
           <h1 className="lock-title">
             <span className="lock-notyet">Not yet,</span>
-            <span className="dune lock-name">Sadaa</span>
+            <span className="dune-rise lock-name">Sadaa</span>
             <span className="ornament">✦</span>
           </h1>
         </div>

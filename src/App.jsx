@@ -7,6 +7,14 @@ import Opening from "./components/Opening/Opening.jsx";
 import "./components/Opening/Opening.css";
 import { UNLOCK_AT, isUnlocked } from "./data/unlock.js";
 
+// legacy display font for the sealed-name title (free/OFL, ships in public/fonts)
+try {
+  document.fonts.add(new FontFace("Dune Rise", "url(./fonts/Dune_Rise.ttf)"));
+  document.fonts.load('400 1em "Dune Rise"').catch(() => {});
+} catch {
+  /* font API unavailable */
+}
+
 const wishes = [
   { language: "English", greeting: "Happy Birthday, Sadaa!", message: "May this new chapter bring you beautiful surprises, brave dreams, and a hundred little reasons to smile." },
   { language: "తెలుగు", greeting: "పుట్టినరోజు శుభాకాంక్షలు, సదా!", message: "నీ జీవితం ఆనందం, ప్రేమ, విజయాలతో నిండిపోవాలి. నీ కలలన్నీ ఒక్కొక్కటిగా నిజం కావాలి!" },

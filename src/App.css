@@ -40,7 +40,9 @@ button { font: inherit; cursor: pointer; border: none; outline: none; }
   inset: 0;
   z-index: 0;
   pointer-events: none;
+  animation: fieldIn 1.2s ease both;
 }
+@keyframes fieldIn { from { opacity: 0; } to { opacity: 1; } }
 footer {
   position: fixed;
   bottom: 0;

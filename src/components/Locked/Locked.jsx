@@ -33,7 +33,7 @@ export default function Locked({ onUnlocked }) {
 
   return (
     <main className="locked">
-      <StarField nameAlpha={0.75} />
+      <StarField gather={false} dust={900} nameAlpha={0.75} />
 
       <section className="lock-panel">
         <div className="lock-seal">

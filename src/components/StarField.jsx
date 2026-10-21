@@ -7,8 +7,9 @@ const clamp = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
  * Live star field: most stars hold the shape of the name and breathe,
  * the rest drift as background dust. The pointer bends the letters —
  * stars near the cursor are pushed away and swirl, then spring back.
+ * With `gather={false}` the name is not formed yet — only scattered stars.
  */
-export default function StarField({ label = "SADAA", nameAlpha = 0.72, dust = 300 }) {
+export default function StarField({ label = "SADAA", nameAlpha = 0.72, dust = 300, gather = true }) {
   const canvasRef = useRef(null);
 
   useEffect(() => {
@@ -44,15 +45,17 @@ export default function StarField({ label = "SADAA", nameAlpha = 0.72, dust = 30
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
       const size = Math.min(H * 0.26, W * 0.62);
-      const points = buildTextPoints(
-        label,
-        W,
-        H,
-        1500,
-        `700 ${size}px "Cinzel Decorative", "Cinzel", Georgia, serif`,
-        0.46,
-        "0.1em"
-      );
+      const points = gather
+        ? buildTextPoints(
+            label,
+            W,
+            H,
+            1500,
+            `700 ${size}px "Cinzel Decorative", "Cinzel", Georgia, serif`,
+            0.46,
+            "0.1em"
+          )
+        : [];
 
       nameStars = points.map((p) => ({
         x: p.x + (Math.random() - 0.5) * 2.2,
@@ -201,7 +204,7 @@ export default function StarField({ label = "SADAA", nameAlpha = 0.72, dust = 30
       window.removeEventListener("resize", onResize);
       clearTimeout(resizeTimer);
     };
-  }, [label, nameAlpha, dust]);
+  }, [label, nameAlpha, dust, gather]);
 
   return <canvas ref={canvasRef} className="particles-canvas" />;
 }

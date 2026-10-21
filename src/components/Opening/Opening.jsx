@@ -1,16 +1,23 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { buildTextPoints } from "../../utils/glyph.js";
 
 const clamp = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
 const easeOut = (p) => 1 - Math.pow(1 - p, 3);
 
 /**
- * Opening sequence: a scattered star field gathers and forms the name,
- * then dissolves into the site. (Astra-style title gather.)
+ * Opening: a sky of scattered stars waits for a tap. On the tap every star
+ * rushes inward, swirling, until the whole field has become the name.
+ * (Astra-style gather.)
  */
 export default function Opening({ onDone }) {
   const canvasRef = useRef(null);
-  const doneRef = useRef(false);
+  const started = useRef(false);
+  const startedAt = useRef(0);
+  const finished = useRef(false);
+  const onDoneRef = useRef(onDone);
+  const [tapped, setTapped] = useState(false);
+
+  onDoneRef.current = onDone;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -20,28 +27,28 @@ export default function Opening({ onDone }) {
     let W = 0;
     let H = 0;
     let raf = 0;
-    let start = 0;
     let particles = [];
 
     const COUNT = 3200;
-    const DURATION = 3600;
+    const DURATION = 3400;
+    const HOLD = 1100;
 
     function build() {
       const rect = canvas.getBoundingClientRect();
-      W = rect.width;
-      H = rect.height;
+      W = rect.width || window.innerWidth;
+      H = rect.height || window.innerHeight;
       canvas.width = Math.round(W * dpr);
       canvas.height = Math.round(H * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      const size = Math.min(H * 0.28, W * 0.88);
+      const size = Math.min(H * 0.26, W * 0.62);
       const points = buildTextPoints(
         "SADAA",
         W,
         H,
         COUNT,
         `700 ${size}px "Cinzel Decorative", "Cinzel", Georgia, serif`,
-        0.48,
+        0.46,
         "0.1em"
       );
 
@@ -49,7 +56,7 @@ export default function Opening({ onDone }) {
       for (let i = 0; i < COUNT; i++) {
         const target = points[i % Math.max(1, points.length)] || { x: W / 2, y: H / 2 };
         const ang = Math.random() * Math.PI * 2;
-        const dist = Math.max(W, H) * (0.22 + Math.random() * 0.72);
+        const dist = Math.max(W, H) * (0.24 + Math.random() * 0.76);
         particles.push({
           tx: target.x,
           ty: target.y,
@@ -60,31 +67,40 @@ export default function Opening({ onDone }) {
           twSpeed: 0.02 + Math.random() * 0.05,
           delay: Math.random() * 0.3,
           spin: (Math.random() - 0.5) * 2.4,
+          phase: Math.random() * Math.PI * 2,
+          drift: 5 + Math.random() * 16,
         });
       }
     }
 
     function frame(now) {
-      if (!start) start = now;
-      const t = Math.min(1, (now - start) / DURATION);
-      drawFrame(t);
+      if (started.current && !startedAt.current) startedAt.current = now;
+      const t = started.current ? clamp((now - startedAt.current) / DURATION) : 0;
+
+      draw(t, now);
+
+      if (started.current && t >= 1) {
+        if (!finished.current) {
+          finished.current = true;
+          window.setTimeout(() => onDoneRef.current(), HOLD);
+        }
+        return;
+      }
+      raf = requestAnimationFrame(frame);
     }
 
-    function drawFrame(t) {
-      const fade = t > 0.86 ? 1 - (t - 0.86) / 0.14 : 1;
-
+    function draw(t, now) {
       ctx.clearRect(0, 0, W, H);
-
-      // light sweep travelling across the formed name
-      const sweepX = -W * 0.2 + (t / 0.86) * W * 1.4;
-
       ctx.save();
       ctx.globalCompositeOperation = "lighter";
+
+      // light sweep travelling across the formed name
+      const sweepX = -W * 0.2 + (t / 0.9) * W * 1.4;
+
       for (const p of particles) {
-        const local = clamp((t - 0.08 - p.delay) / 0.55);
+        const local = clamp((t - 0.05 - p.delay) / 0.6);
         const e = easeOut(local);
 
-        // swirl the start position around the target as it flies in
         const swirl = (1 - e) * p.spin;
         const cs = Math.cos(swirl);
         const sn = Math.sin(swirl);
@@ -96,23 +112,28 @@ export default function Opening({ onDone }) {
         let x = p.tx + rx * (1 - e);
         let y = p.ty + ry * (1 - e);
 
+        // before (and during) the gather the free stars drift and breathe
+        const free = 1 - e;
+        if (free > 0.01) {
+          x += Math.sin(now * 0.0006 + p.phase) * p.drift * free;
+          y += Math.cos(now * 0.00045 + p.phase) * p.drift * 0.7 * free;
+        }
+
         p.tw += p.twSpeed;
-        const twinkle = 0.65 + 0.35 * Math.sin(p.tw);
+        const twinkle = 0.6 + 0.4 * Math.sin(p.tw);
 
         const near = 1 - Math.min(1, Math.abs(x - sweepX) / (W * 0.09));
-        const boost = near * near;
+        const boost = near * near * clamp((t - 0.5) / 0.4);
 
-        const r = p.r * (0.7 + 0.7 * e);
-        const alpha = (0.5 + 0.5 * e) * twinkle * fade;
+        const r = p.r * (0.75 + 0.6 * e);
+        const alpha = (0.55 + 0.45 * e) * twinkle;
 
-        // soft halo (bloom) — the glow comes from the stars themselves
-        ctx.globalAlpha = alpha * 0.18;
+        ctx.globalAlpha = alpha * 0.2;
         ctx.fillStyle = boost > 0.05 ? "#fff3d6" : "#e8b45f";
         ctx.beginPath();
         ctx.arc(x, y, r * 3.6, 0, 6.2832);
         ctx.fill();
 
-        // bright core
         ctx.globalAlpha = alpha;
         ctx.fillStyle = boost > 0.05 ? "#fff8e8" : "#f6d190";
         ctx.beginPath();
@@ -120,15 +141,16 @@ export default function Opening({ onDone }) {
         ctx.fill();
       }
       ctx.restore();
-
     }
 
     let resizeTimer;
     const onResize = () => {
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(() => {
+        const wasStarted = started.current;
+        const elapsed = startedAt.current ? performance.now() - startedAt.current : 0;
         build();
-        start = 0;
+        startedAt.current = wasStarted && !finished.current ? performance.now() - elapsed : 0;
       }, 200);
     };
 
@@ -140,7 +162,10 @@ export default function Opening({ onDone }) {
     fontReady.then(() => {
       build();
       if (forced !== null) {
-        drawFrame(Math.min(1, Math.max(0, Number(forced))));
+        const f = clamp(Number(forced) || 0);
+        started.current = true;
+        startedAt.current = performance.now() - f * DURATION;
+        draw(f, performance.now());
       } else {
         raf = requestAnimationFrame(frame);
       }
@@ -152,12 +177,37 @@ export default function Opening({ onDone }) {
       window.removeEventListener("resize", onResize);
       clearTimeout(resizeTimer);
     };
-  }, [onDone]);
+  }, []);
+
+  function begin() {
+    if (started.current) return;
+    started.current = true;
+    setTapped(true);
+  }
 
   return (
-    <div className="opening" onClick={onDone} role="button" tabIndex={-1} aria-label="Skip intro">
+    <div
+      className="opening"
+      onClick={begin}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          begin();
+        }
+      }}
+      role="button"
+      tabIndex={0}
+      aria-label="Open the surprise"
+    >
       <canvas ref={canvasRef} className="opening-canvas" />
-      <p className="opening-caption">the stars are gathering…</p>
+      {!tapped ? (
+        <>
+          <p className="opening-caption opening-prompt">tap anywhere to open</p>
+          <span className="opening-hint" aria-hidden="true">✦</span>
+        </>
+      ) : (
+        <p className="opening-caption opening-gathering">the stars are gathering…</p>
+      )}
     </div>
   );
 }

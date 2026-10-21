@@ -5,6 +5,7 @@
   background:
     radial-gradient(ellipse at 50% 45%, #2c1a2a 0%, #150e1b 45%, #07050b 100%);
   overflow: hidden;
+  cursor: pointer;
 }
 .opening-canvas {
   position: absolute;
@@ -18,19 +19,50 @@
   left: 0;
   right: 0;
   bottom: 9%;
+  margin: 0;
   text-align: center;
   font-family: 'Dancing Script', cursive;
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   letter-spacing: .04em;
-  color: #9c8a8d;
-  animation: captionFade 3.5s ease-in-out forwards;
+  color: #a08c90;
+  animation: captionIn 1.2s ease .5s both;
 }
-@keyframes captionFade {
-  0% { opacity: 0; }
-  18% { opacity: .7; }
-  62% { opacity: .55; }
-  100% { opacity: 0; }
+.opening-prompt {
+  animation: captionIn 1.2s ease .5s both, promptBreathe 3s ease-in-out 1.7s infinite;
+}
+.opening-gathering {
+  color: #c9b39a;
+  animation: captionIn .5s ease both;
+}
+@keyframes captionIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: .85; transform: translateY(0); }
+}
+@keyframes promptBreathe {
+  0%, 100% { opacity: .55; }
+  50% { opacity: .95; }
+}
+.opening-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 4.6%;
+  transform: translateX(-50%);
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  font-size: .62rem;
+  color: rgba(240, 194, 124, .75);
+  border: 1px solid rgba(240, 194, 124, .28);
+  border-radius: 50%;
+  animation: hintRing 2.6s ease-in-out .8s infinite;
+}
+@keyframes hintRing {
+  0% { box-shadow: 0 0 0 0 rgba(240, 194, 124, .25); opacity: .5; }
+  70% { box-shadow: 0 0 0 16px rgba(240, 194, 124, 0); opacity: .9; }
+  100% { box-shadow: 0 0 0 0 rgba(240, 194, 124, 0); opacity: .5; }
 }
 @media (max-width: 520px) {
-  .opening-caption { font-size: .95rem; bottom: 12%; }
+  .opening-caption { font-size: .98rem; bottom: 12%; }
+  .opening-hint { bottom: 7%; }
 }

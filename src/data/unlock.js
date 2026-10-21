@@ -28,7 +28,8 @@ export function timeLeft(target) {
 export function isUnlocked(target) {
   if (typeof window === "undefined") return false;
   const params = new URLSearchParams(window.location.search);
-  if (params.get("open") === "1") return true;
+  // ?open=1 is a dev-machine test bypass only — the deployed link stays sealed
+  if (params.get("open") === "1" && import.meta.env.DEV) return true;
   try {
     if (window.localStorage.getItem("sadaa-unlocked") === "1") return true;
   } catch {
